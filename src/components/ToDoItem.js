@@ -1,9 +1,9 @@
 import React from 'react'
 import Table from './Table'
 
-const ToDoItem = ({toDos, headers,handleDelete}) => {
+const ToDoItem = ({toDos, headers,handleDelete, searchTerm}) => {
   return (
-    <Table headers={headers} data={toDos} handleDelete={handleDelete} />
+    <Table headers={headers} data={toDos} handleDelete={handleDelete} searchTerm={searchTerm}/>
   )
 }
 

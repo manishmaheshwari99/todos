@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-function Table({headers, data, handleDelete}) {
+function Table({headers, data, handleDelete, searchTerm}) {
   return (
     <table>
         <thead>
@@ -12,7 +12,14 @@ function Table({headers, data, handleDelete}) {
         <tbody>
             {
                 
-                data.map(item => <TableRow key={item.id} item={item} headers={headers} handleDelete={handleDelete} /> )
+                data.filter( (val)=>{
+                    if (searchTerm == "") {
+                        return val
+                    }
+                    else if (val.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+                        return val
+                    }
+                }).map(item => <TableRow key={item.id} item={item} headers={headers} handleDelete={handleDelete} /> )
             }
         </tbody>
     </table>

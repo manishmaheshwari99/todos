@@ -23,7 +23,8 @@ export class App extends Component {
     super(props)
   
     this.state = {
-       toDos: []
+       toDos: [],
+       searchText: ''
     }
   }
 
@@ -35,6 +36,12 @@ export class App extends Component {
     let res = await axios.get(`${this.BASE_URL}todos`);
     this.setState({
       toDos: res.data
+    })
+  }
+
+  searchTodo = (event) => {
+    this.setState({
+      searchText: event.target.value
     })
   }
 
@@ -55,7 +62,8 @@ export class App extends Component {
     return (
       <>
         <AddToDoItem onSubmit={this.fetchToDos} />
-        {this.state.toDos.length > 0 ? <ToDoList toDos={this.state.toDos} headers={this.headers} handleDelete={this.handleDelete}/> : <h2>No Any To Do </h2>} 
+        <input type='text' value={this.state.searchText} onChange={this.searchTodo} />
+        {this.state.toDos.length > 0 ? <ToDoList toDos={this.state.toDos} headers={this.headers} searchTerm={this.state.searchText} handleDelete={this.handleDelete}/> : <h2>No Any To Do </h2>} 
       </>
     )
   }
