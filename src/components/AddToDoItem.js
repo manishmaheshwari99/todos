@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { Component } from 'react'
 import todoStyles from './ToDo.module.css';
+import ApiCalendar from 'react-google-calendar-api';
 
 class AddToDoItem extends Component {
 
@@ -13,6 +14,7 @@ class AddToDoItem extends Component {
        title: '',
        startTime: '',
        endTime: '',
+       isCreatingToDo: false
     }
   }
 
@@ -43,18 +45,62 @@ class AddToDoItem extends Component {
   }
 
   postToDo = async() => {
+
+    this.setState(prevState=>{
+      return {
+        ...prevState,
+        isCreatingToDo: true
+      }
+    })
+
+    // ApiCalendar.handleAuthClick();
+    if (!ApiCalendar.sign) {
+      ApiCalendar.handleAuthClick();
+    }
+
     let data = {
-        title: this.state.title,
-        endDate: this.state.endTime,
-        fromDate: this.state.startTime
+      title: this.state.title,
+      endDate: this.state.endTime,
+      fromDate: this.state.startTime
     }
     let res = await axios.post(`${this.BASE_URL}todos`, data);
+    console.log(res)
     if (res) {
+        this.setState(prevState=>{
+          return {
+            ...prevState,
+            isCreatingToDo: false
+          }
+        })
         this.props.onSubmit();
+        this.createEvent(data)
     }
   }
 
+  createEvent({title, fromDate, endDate, desc}) {
+    let updatedFromDate = new Date(fromDate).toISOString()
+    let updatedEndDate = new Date(endDate).toISOString()
+    let stDate = updatedFromDate;
+    let test = updatedEndDate;
+    let description = desc || 'By Default Description'
+    const event = {
+      summary: title,
+      description: description,
+      start: {
+        dateTime: stDate
+      },
+      end: {
+        dateTime: test
+      }
+    };
+
+    ApiCalendar.createEvent(event)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  }
+
   render() {
+    let buttonValue = this.state.isCreatingToDo ? 'Creating' : 'Create ';
     return (
       <>
         <div className={todoStyles.formContainer}>
@@ -74,7 +120,7 @@ class AddToDoItem extends Component {
                         <input type='datetime-local' value={this.state.endTime} onChange={this.handleEndTime} />
                     </div>
                     <div className={todoStyles.formGroup}>
-                        <input type='submit' value="Create Task" />
+                        <input type='submit' value={buttonValue}/>
                     </div>
                 </form>
             </div>

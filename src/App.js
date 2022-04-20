@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { Component } from 'react'
 import AddToDoItem from './components/AddToDoItem';
-import ToDoList from './components/ToDoList'
+import ToDoList from './components/ToDoList';
 
 export class App extends Component {
 
@@ -32,7 +32,8 @@ export class App extends Component {
     this.fetchToDos();
   }
 
-  async fetchToDos() {
+  fetchToDos = async() => {
+    console.log(this)
     let res = await axios.get(`${this.BASE_URL}todos`);
     this.setState({
       toDos: res.data
